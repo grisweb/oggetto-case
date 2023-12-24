@@ -22,6 +22,7 @@ const RHFArrayField: FC<RHFArrayFieldProps> = ({ name, ...other }) => {
 
   return fields.map((field, index) => (
     <TextField
+      {...other}
       key={field.id}
       {...register(`test.${index}.value`)}
       InputProps={{

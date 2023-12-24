@@ -66,11 +66,11 @@ const MeetingsList: FC = () => {
   useEffect(() => {
     const currentDate = dayjs().toISOString();
 
-    setFilter({
+    setFilter((filter) => ({
       ...filter,
       ...getDateByFilter(dateFilter, currentDate),
-    });
-  }, [dateFilter, filter]);
+    }));
+  }, [dateFilter]);
 
   const { data, isLoading } = useGetMeetingsQuery(filter);
 

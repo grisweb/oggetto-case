@@ -22,6 +22,7 @@ import DateTimeFields from './DateTimeFields.tsx';
 import { useAddMeetingMutation } from '../../../app/services/meetingsApi.ts';
 import { useGetMeQuery } from '../../../app/services/authApi.ts';
 import { useAppSelector } from '../../../app/hooks.ts';
+import RHFArrayField from '../../form/components/RHFArrayField.tsx';
 
 interface MeetingFormModalProps {
   open: boolean;
@@ -143,6 +144,8 @@ const MeetingFormModal: FC<MeetingFormModalProps> = ({
                 users={users?.filter((user) => user.isApproved) || []}
               />
               <DateTimeFields />
+              <RHFArrayField name="eventDetails" />
+              <RHFArrayField name="additionalLinks" />
               <Stack direction="row" spacing={2} justifyContent="flex-end">
                 <Button variant="outlined" onClick={onClose}>
                   Отмена
