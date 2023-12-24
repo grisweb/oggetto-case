@@ -22,7 +22,7 @@ import { setToken } from '../authSlice.ts';
 
 interface LoginModalProps {
   open: boolean;
-  onClose: () => void;
+  onClose: VoidFunction;
 }
 
 const StyledDialog = styled(Dialog)({

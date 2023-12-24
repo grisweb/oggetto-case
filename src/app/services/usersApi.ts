@@ -7,7 +7,8 @@ const usersApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getUsers: builder.query<GetUsersResponse, null>({
       query: () => ({
-        url: '/User',
+        //url: '/User',
+        url: '/users',
       }),
     }),
   }),

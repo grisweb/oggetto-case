@@ -5,7 +5,7 @@ interface LayoutSlice {
 }
 
 const initialState: LayoutSlice = {
-  sidebarOpened: false,
+  sidebarOpened: true,
 };
 
 const layoutSlice = createSlice({

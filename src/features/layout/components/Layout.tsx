@@ -6,18 +6,16 @@ import Header from './Header.tsx';
 import Sidebar, { DRAWER_WIDTH } from './Sidebar.tsx';
 import { useAppSelector } from '../../../app/hooks.ts';
 
-const Main = styled('main')(({ theme }) => ({
-  backgroundColor: theme.palette.grey['100'],
+const Main = styled('main')({
   flexGrow: 1,
-  borderRadius: '15px 15px 0 0',
   padding: '20px',
   marginTop: '60px',
   marginRight: '20px',
-}));
+});
 
 const MainPaper = styled(Paper)({
   width: '100%',
-  height: '100%',
+  minHeight: '100%',
   borderRadius: '15px',
 });
 
@@ -29,7 +27,7 @@ const Layout: FC = () => {
   const drawerWidth = sidebarOpened ? DRAWER_WIDTH : 0;
 
   return (
-    <Box display="flex" height="100vh">
+    <Box display="flex" minHeight="100vh">
       <AppBar
         enableColorOnDark
         position="fixed"

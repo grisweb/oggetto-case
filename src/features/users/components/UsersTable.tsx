@@ -16,11 +16,12 @@ import {
   useTheme,
 } from '@mui/material';
 import { AddTask, Clear, Done } from '@mui/icons-material';
+import { MRT_Localization_RU } from 'material-react-table/locales/ru';
 
 const columns: MRT_ColumnDef<User>[] = [
   {
     accessorKey: 'id',
-    header: 'id',
+    header: 'ID',
     size: 80,
   },
   {
@@ -65,6 +66,8 @@ const UsersTable: FC = () => {
     data: data || [],
     columns,
     enableRowActions: true,
+    enableFullScreenToggle: false,
+    localization: MRT_Localization_RU,
     renderRowActions: ({ row }) => (
       <>
         <Box sx={{ display: 'flex', gap: '1rem' }}>

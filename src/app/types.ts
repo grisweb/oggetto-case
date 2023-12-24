@@ -14,3 +14,22 @@ export interface User {
   email: string;
   isApproved: boolean;
 }
+
+export interface Meeting {
+  id: string;
+  title: string;
+  createdAt: string;
+  description: string;
+  linkToMeeting: string;
+  owner: User;
+  users: User[];
+  comments: Comment;
+}
+
+export interface Comment {
+  id: string;
+  text: string;
+  createdAt: string;
+  calendarId: string;
+  user: User;
+}
