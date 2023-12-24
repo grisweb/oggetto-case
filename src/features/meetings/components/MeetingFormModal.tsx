@@ -1,5 +1,7 @@
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 import {
   Button,
   Box,
@@ -10,8 +12,6 @@ import {
   styled,
   CircularProgress,
 } from '@mui/material';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 
 import { Meeting } from '../../../app/types.ts';
 import { useGetUsersQuery } from '../../../app/services/usersApi.ts';
@@ -19,6 +19,9 @@ import RHFTextField from '../../form/components/RHFTextField.tsx';
 import RHForm from '../../form/components/RHForm.tsx';
 import UsersField from './UsersField.tsx';
 import DateTimeFields from './DateTimeFields.tsx';
+import { useAddMeetingMutation } from '../../../app/services/meetingsApi.ts';
+import { useGetMeQuery } from '../../../app/services/authApi.ts';
+import { useAppSelector } from '../../../app/hooks.ts';
 
 interface MeetingFormModalProps {
   open: boolean;
@@ -32,6 +35,8 @@ export interface MeetingFormData {
   users: number[];
   startedAt: string;
   endedAt: string;
+  eventDetails: string[];
+  additionalLinks: string[];
 }
 
 const StyledDialog = styled(Dialog)({
@@ -46,6 +51,8 @@ const initValues: MeetingFormData = {
   users: [],
   startedAt: '',
   endedAt: '',
+  eventDetails: [],
+  additionalLinks: [],
 };
 
 const requiredMessage = 'Это значение является обязательным';
@@ -56,6 +63,14 @@ const formSchema = yup.object().shape({
   users: yup.array().of(yup.number().required()).default([]),
   startedAt: yup.string().required(requiredMessage),
   endedAt: yup.string().required(requiredMessage),
+  eventDetails: yup
+    .array()
+    .of(yup.string().required(requiredMessage))
+    .default([]),
+  additionalLinks: yup
+    .array()
+    .of(yup.string().required(requiredMessage))
+    .default([]),
 });
 
 const MeetingFormModal: FC<MeetingFormModalProps> = ({
@@ -76,8 +91,25 @@ const MeetingFormModal: FC<MeetingFormModalProps> = ({
     resolver: yupResolver(formSchema),
   });
 
+  const [addMeeting, { isLoading: isSubmitting }] = useAddMeetingMutation();
+
+  const token = useAppSelector((state) => state.auth.token);
+
+  const { data } = useGetMeQuery(null, {
+    skip: !token,
+  });
+
   const onSubmit = async (formData: MeetingFormData) => {
-    console.log(formData);
+    const { users, ...other } = formData;
+
+    await addMeeting({
+      ...other,
+      usersIds: users,
+      ownerId: data?.id as number,
+    }).unwrap();
+
+    form.reset();
+    onClose();
   };
 
   const { data: users, isLoading } = useGetUsersQuery(null);
@@ -88,7 +120,7 @@ const MeetingFormModal: FC<MeetingFormModalProps> = ({
         {defaultData ? 'Редактировать встречу' : 'Создать встречу'}
       </DialogTitle>
       <DialogContent>
-        {isLoading ? (
+        {isLoading || isSubmitting ? (
           <Box
             display="flex"
             justifyContent="center"
@@ -107,7 +139,9 @@ const MeetingFormModal: FC<MeetingFormModalProps> = ({
                 rows={2}
                 label="Описание"
               />
-              <UsersField users={users || []} />
+              <UsersField
+                users={users?.filter((user) => user.isApproved) || []}
+              />
               <DateTimeFields />
               <Stack direction="row" spacing={2} justifyContent="flex-end">
                 <Button variant="outlined" onClick={onClose}>

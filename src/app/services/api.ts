@@ -38,7 +38,7 @@ const api = createApi({
   reducerPath: 'splitApi',
   baseQuery: query,
   endpoints: () => ({}),
-  tagTypes: ['Users'],
+  tagTypes: ['User', 'Meeting'],
 });
 
 export default api;

@@ -5,8 +5,11 @@ import {
   useMaterialReactTable,
 } from 'material-react-table';
 
-import { User } from '../../../app/types.ts';
-import { useGetUsersQuery } from '../../../app/services/usersApi.ts';
+import { Roles, User } from '../../../app/types.ts';
+import {
+  useApproveMutation,
+  useGetUsersQuery,
+} from '../../../app/services/usersApi.ts';
 import {
   Box,
   IconButton,
@@ -53,13 +56,28 @@ const UsersTable: FC = () => {
 
   const theme = useTheme();
 
+  const [approve, { isLoading: isSubmitting }] = useApproveMutation();
+
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const [userId, setUserId] = useState(0);
+
+  const handleClick =
+    (id: number) => (event: MouseEvent<HTMLButtonElement>) => {
+      setAnchorEl(event.currentTarget);
+      setUserId(id);
+    };
+
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleApprove = (approvedRole: Roles) => () => {
+    approve({
+      userId,
+      approvedRole,
+      isApproved: true,
+    });
   };
 
   const table = useMaterialReactTable({
@@ -75,7 +93,7 @@ const UsersTable: FC = () => {
             <>-</>
           ) : (
             <Tooltip title="Подтвердить">
-              <IconButton onClick={handleClick}>
+              <IconButton onClick={handleClick(row.original.id)}>
                 <AddTask />
               </IconButton>
             </Tooltip>
@@ -91,14 +109,19 @@ const UsersTable: FC = () => {
             'aria-labelledby': 'basic-button',
           }}
         >
-          <MenuItem onClick={handleClose}>Администратор</MenuItem>
-          <MenuItem onClick={handleClose}>Специалист</MenuItem>
-          <MenuItem onClick={handleClose}>Сотрудник</MenuItem>
+          <MenuItem onClick={handleApprove(Roles.Admin)}>
+            Администратор
+          </MenuItem>
+          <MenuItem onClick={handleApprove(Roles.Specialist)}>
+            Специалист
+          </MenuItem>
+          <MenuItem onClick={handleApprove(Roles.Normal)}>Сотрудник</MenuItem>
         </Menu>
       </>
     ),
     state: {
       isLoading,
+      isSaving: isSubmitting,
     },
     muiTablePaperProps: {
       elevation: 0,

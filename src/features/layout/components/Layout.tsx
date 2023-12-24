@@ -17,6 +17,8 @@ const MainPaper = styled(Paper)({
   width: '100%',
   minHeight: '100%',
   borderRadius: '15px',
+  display: 'flex',
+  flexDirection: 'column',
 });
 
 const Layout: FC = () => {

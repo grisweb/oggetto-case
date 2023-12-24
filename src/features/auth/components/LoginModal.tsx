@@ -58,6 +58,10 @@ const LoginModal: FC<LoginModalProps> = ({ open, onClose }) => {
       setIsNotApproved(true);
       dispatch(setToken(null));
     }
+
+    if (data && data.isApproved) {
+      onClose();
+    }
   }, [data]);
 
   const login = useGoogleLogin({

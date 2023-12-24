@@ -18,6 +18,8 @@ export interface User {
 export interface Meeting {
   id: string;
   title: string;
+  startedAt: string;
+  endedAt: string;
   createdAt: string;
   description: string;
   linkToMeeting: string;

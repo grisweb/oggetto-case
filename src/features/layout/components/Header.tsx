@@ -51,16 +51,11 @@ const Header: FC = () => {
 
   return (
     <>
-      {/*{data && data.isApproved && (*/}
-      {/*  <Fab size="small" color="default" onClick={handleClick}>*/}
-      {/*    <Menu />*/}
-      {/*  </Fab>*/}
-      {/*)}*/}
-      {
+      {data && data.isApproved && (
         <IconButton size="large" color="primary" onClick={handleClick}>
           <Menu />
         </IconButton>
-      }
+      )}
       <LogoWrapper>
         <img src={oggettoLogo} alt="Oggetto logo" />
       </LogoWrapper>
@@ -69,13 +64,13 @@ const Header: FC = () => {
       </Typography>
       <Box sx={{ flexGrow: 1 }} />
       {isLoading ? (
-        <Avatar>
+        <Avatar sx={{ mr: 2 }}>
           <CircularProgress />
         </Avatar>
       ) : (
         <>
           {data && data.isApproved ? (
-            <Avatar src={data.photoUrl} alt="Avatar" />
+            <Avatar sx={{ mr: 2 }} src={data.photoUrl} alt="Avatar" />
           ) : (
             <Box mr={1}>
               <Button onClick={handleClickLogin}>
