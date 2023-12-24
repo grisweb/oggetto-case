@@ -52,8 +52,8 @@ const initValues: MeetingFormData = {
   users: [],
   startedAt: '',
   endedAt: '',
-  eventDetails: [],
-  additionalLinks: [],
+  eventDetails: [''],
+  additionalLinks: [''],
 };
 
 const requiredMessage = 'Это значение является обязательным';

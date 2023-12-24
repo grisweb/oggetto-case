@@ -72,7 +72,9 @@ const MeetingsList: FC = () => {
     }));
   }, [dateFilter]);
 
-  const { data, isLoading } = useGetMeetingsQuery(filter);
+  const { data, isLoading } = useGetMeetingsQuery(filter, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const filterHandleChange = (_: unknown, value: MeetingsListDateFilters) => {
     setDateFilter(value);
@@ -95,7 +97,7 @@ const MeetingsList: FC = () => {
 
   return (
     <>
-      <Box>
+      <Box mb={4}>
         <ToggleButtonGroup
           color="primary"
           value={dateFilter}

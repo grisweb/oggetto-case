@@ -16,6 +16,8 @@ const baseQuery = fetchBaseQuery({
     const { token } = (getState() as RootState).auth;
     if (token) {
       headers.set('Authorization', `Bearer ${token}`);
+      // TODO: clear
+      headers.set('ngrok-skip-browser-warning', `true`);
     }
   },
 });
