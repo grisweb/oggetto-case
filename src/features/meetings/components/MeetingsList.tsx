@@ -70,7 +70,7 @@ const MeetingsList: FC = () => {
       ...filter,
       ...getDateByFilter(dateFilter, currentDate),
     });
-  }, [dateFilter]);
+  }, [dateFilter, filter]);
 
   const { data, isLoading } = useGetMeetingsQuery(filter);
 

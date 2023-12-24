@@ -62,7 +62,7 @@ const LoginModal: FC<LoginModalProps> = ({ open, onClose }) => {
     if (data && data.isApproved) {
       onClose();
     }
-  }, [data]);
+  }, [data, dispatch, onClose]);
 
   const login = useGoogleLogin({
     scope: `email ${googleApi}/auth/calendar.events ${googleApi}/auth/calendar`,
