@@ -17,6 +17,7 @@ import {
 import { MoreVert } from '@mui/icons-material';
 
 import { Meeting } from '../../../app/types.ts';
+import MeetingFormModal from './MeetingFormModal.tsx';
 
 interface MeetingCardProps {
   meeting: Meeting;
@@ -33,6 +34,16 @@ const MeetingCard: FC<MeetingCardProps> = ({ meeting }) => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const [openEdit, setOpenEdit] = useState(false);
+
+  const handleEdit = () => {
+    setOpenEdit(true);
+  };
+
+  const handleEditClose = () => {
+    setOpenEdit(false);
   };
 
   return (
@@ -82,9 +93,14 @@ const MeetingCard: FC<MeetingCardProps> = ({ meeting }) => {
         onClose={handleClose}
         elevation={1}
       >
-        <MenuItem onClick={handleClose}>Редактировать</MenuItem>
+        <MenuItem onClick={handleEdit}>Редактировать</MenuItem>
         <MenuItem onClick={handleClose}>Удалить</MenuItem>
       </Menu>
+      <MeetingFormModal
+        open={openEdit}
+        onClose={handleEditClose}
+        defaultData={meeting}
+      />
     </>
   );
 };

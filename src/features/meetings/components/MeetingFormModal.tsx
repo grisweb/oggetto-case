@@ -19,7 +19,10 @@ import RHFTextField from '../../form/components/RHFTextField.tsx';
 import RHForm from '../../form/components/RHForm.tsx';
 import UsersField from './UsersField.tsx';
 import DateTimeFields from './DateTimeFields.tsx';
-import { useAddMeetingMutation } from '../../../app/services/meetingsApi.ts';
+import {
+  useAddMeetingMutation,
+  useEditMeetingMutation,
+} from '../../../app/services/meetingsApi.ts';
 import { useGetMeQuery } from '../../../app/services/authApi.ts';
 import { useAppSelector } from '../../../app/hooks.ts';
 import RHFArrayField from '../../form/components/RHFArrayField.tsx';
@@ -33,7 +36,7 @@ interface MeetingFormModalProps {
 export interface MeetingFormData {
   title: string;
   description: string;
-  users: number[];
+  userIds: number[];
   startedAt: string;
   endedAt: string;
   eventDetails: string[];
@@ -49,7 +52,7 @@ const StyledDialog = styled(Dialog)({
 const initValues: MeetingFormData = {
   title: '',
   description: '',
-  users: [],
+  userIds: [],
   startedAt: '',
   endedAt: '',
   eventDetails: [''],
@@ -61,7 +64,7 @@ const requiredMessage = 'Это значение является обязате
 const formSchema = yup.object().shape({
   title: yup.string().required(requiredMessage),
   description: yup.string().required(requiredMessage),
-  users: yup.array().of(yup.number().required()).default([]),
+  userIds: yup.array().of(yup.number().required()).default([]),
   startedAt: yup.string().required(requiredMessage),
   endedAt: yup.string().required(requiredMessage),
   eventDetails: yup
@@ -79,11 +82,17 @@ const MeetingFormModal: FC<MeetingFormModalProps> = ({
   onClose,
   defaultData,
 }) => {
+  const isEditing = !!defaultData;
+
   const defaultValues = defaultData
     ? {
         title: defaultData.title,
         description: defaultData.description,
-        users: defaultData.users.map((user) => user.id),
+        userIds: defaultData.users.map((user) => user.id),
+        startedAt: defaultData.startedAt,
+        endedAt: defaultData.endedAt,
+        additionalLinks: defaultData.additionalLinks,
+        eventDetails: defaultData.eventDetails,
       }
     : initValues;
 
@@ -92,7 +101,10 @@ const MeetingFormModal: FC<MeetingFormModalProps> = ({
     resolver: yupResolver(formSchema),
   });
 
-  const [addMeeting, { isLoading: isSubmitting }] = useAddMeetingMutation();
+  const [addMeeting, { isLoading: isAddLoading }] = useAddMeetingMutation();
+  const [editMeeting, { isLoading: isEditLoading }] = useEditMeetingMutation();
+
+  const isSubmitting = isAddLoading || isEditLoading;
 
   const token = useAppSelector((state) => state.auth.token);
 
@@ -101,11 +113,19 @@ const MeetingFormModal: FC<MeetingFormModalProps> = ({
   });
 
   const onSubmit = async (formData: MeetingFormData) => {
-    const { users, ...other } = formData;
+    if (isEditing) {
+      await editMeeting({
+        id: defaultData?.id as string,
+        ...formData,
+      }).unwrap();
+
+      form.reset();
+      onClose();
+      return;
+    }
 
     await addMeeting({
-      ...other,
-      usersIds: users,
+      ...formData,
       ownerId: data?.id as number,
     }).unwrap();
 
@@ -144,8 +164,8 @@ const MeetingFormModal: FC<MeetingFormModalProps> = ({
                 users={users?.filter((user) => user.isApproved) || []}
               />
               <DateTimeFields />
-              <RHFArrayField name="eventDetails" />
-              <RHFArrayField name="additionalLinks" />
+              <RHFArrayField name="eventDetails" label="Обсуждаемые вопросы" />
+              <RHFArrayField name="additionalLinks" label="Ссылки" />
               <Stack direction="row" spacing={2} justifyContent="flex-end">
                 <Button variant="outlined" onClick={onClose}>
                   Отмена

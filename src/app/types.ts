@@ -23,6 +23,8 @@ export interface Meeting {
   createdAt: string;
   description: string;
   linkToMeeting: string;
+  additionalLinks: string[];
+  eventDetails: string[];
   owner: User;
   users: User[];
   comments: Comment;

@@ -10,11 +10,13 @@ interface UsersFieldOptions {
 }
 
 const UsersField: FC<UsersFieldOptions> = ({ users }) => {
-  const { setValue } = useFormContext<MeetingFormData>();
+  const { setValue, watch } = useFormContext<MeetingFormData>();
+
+  const value = watch('userIds');
 
   const handleChange = (_: unknown, value: User[]) => {
     setValue(
-      'users',
+      'userIds',
       value.map((user) => user.id),
     );
   };
@@ -23,9 +25,10 @@ const UsersField: FC<UsersFieldOptions> = ({ users }) => {
     <Autocomplete
       multiple
       options={users || []}
+      value={users.filter((user) => value.includes(user.id))}
       noOptionsText="Пользователи отсутствуют"
       onChange={handleChange}
-      getOptionLabel={(option) => option.fullName + option.email}
+      getOptionLabel={(option) => `${option.fullName} (${option.email})`}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       renderInput={(params) => (
         <TextField

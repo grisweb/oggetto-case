@@ -1,13 +1,12 @@
 import { FC, useEffect } from 'react';
 import { useFormContext, useFieldArray } from 'react-hook-form';
 import {
-  Button,
   IconButton,
   InputAdornment,
   TextField,
   TextFieldProps,
 } from '@mui/material';
-import { Add } from '@mui/icons-material';
+import { Add, Remove } from '@mui/icons-material';
 
 type RHFArrayFieldProps = TextFieldProps & {
   name: string;
@@ -16,29 +15,35 @@ type RHFArrayFieldProps = TextFieldProps & {
 const RHFArrayField: FC<RHFArrayFieldProps> = ({ name, ...other }) => {
   const { control, register } = useFormContext();
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, remove, append } = useFieldArray({
     control,
     name,
   });
 
+  useEffect(() => {
+    if (!fields.length) {
+      append('');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
-      <Button onClick={() => append('')}>Добавить ссылку</Button>
       {fields.map((field, index) => (
         <TextField
           {...other}
           key={field.id}
-          {...register(`test.${index}.value`)}
+          {...register(`${name}.${index}`)}
           InputProps={{
             endAdornment: (
               <InputAdornment position="start">
-                {index ? (
-                  <IconButton onClick={() => append(fields.length - 1)}>
+                {!index ? (
+                  <IconButton onClick={() => append('')}>
                     <Add />
                   </IconButton>
                 ) : (
                   <IconButton onClick={() => remove(index)}>
-                    <Add />
+                    <Remove />
                   </IconButton>
                 )}
               </InputAdornment>

@@ -18,7 +18,7 @@ import {
   Tooltip,
   useTheme,
 } from '@mui/material';
-import { AddTask, Clear, Done } from '@mui/icons-material';
+import { AddTask, Clear, Delete, Done, Edit } from '@mui/icons-material';
 import { MRT_Localization_RU } from 'material-react-table/locales/ru';
 
 const columns: MRT_ColumnDef<User>[] = [
@@ -89,15 +89,23 @@ const UsersTable: FC = () => {
     renderRowActions: ({ row }) => (
       <>
         <Box sx={{ display: 'flex', gap: '1rem' }}>
-          {row.original.isApproved ? (
-            <>-</>
-          ) : (
+          {row.original.isApproved && (
             <Tooltip title="Подтвердить">
               <IconButton onClick={handleClick(row.original.id)}>
                 <AddTask />
               </IconButton>
             </Tooltip>
           )}
+          <Tooltip title="Редактировать">
+            <IconButton>
+              <Edit />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Удалить">
+            <IconButton>
+              <Delete />
+            </IconButton>
+          </Tooltip>
         </Box>
         <Menu
           id="basic-menu"

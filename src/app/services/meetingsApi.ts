@@ -17,8 +17,12 @@ interface AddMeetingRequest {
   description: string;
   startedAt: string;
   endedAt: string;
-  usersIds: number[];
+  userIds: number[];
 }
+
+type EditMeetingRequest = Omit<AddMeetingRequest, 'ownerId'> & {
+  id: string;
+};
 
 const meetingsApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -27,9 +31,14 @@ const meetingsApi = api.injectEndpoints({
         url: '/Calendar/filter',
         method: 'POST',
         body,
-        //url: '/users/1/meeetings',
       }),
-      providesTags: ['Meeting'],
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: 'Meeting' as const, id })),
+              'Meeting',
+            ]
+          : ['Meeting'],
     }),
     getMeeting: builder.query<GetMeetingsResponse, string>({
       query: (id) => ({
@@ -44,7 +53,27 @@ const meetingsApi = api.injectEndpoints({
       }),
       invalidatesTags: ['Meeting'],
     }),
+    editMeeting: builder.mutation<Meeting, EditMeetingRequest>({
+      query: (body) => ({
+        url: `Calendar/${body.id}`,
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['Meeting'],
+    }),
+    deleteMeeting: builder.mutation<null, string>({
+      query: (id) => ({
+        url: `Calendar/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Meeting'],
+    }),
   }),
 });
 
-export const { useGetMeetingsQuery, useAddMeetingMutation } = meetingsApi;
+export const {
+  useGetMeetingsQuery,
+  useAddMeetingMutation,
+  useDeleteMeetingMutation,
+  useEditMeetingMutation,
+} = meetingsApi;
